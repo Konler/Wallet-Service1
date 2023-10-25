@@ -7,22 +7,16 @@ import java.util.Objects;
  * The type Transaction.
  */
 public class Transaction {
-    private final Long id;
-    private final TransactionType type;
+    private Long id;
+    private TransactionType type;
     private double amount;
     private State state;
-    private final Long playerId;
+    private Long playerId;
 
-    /**
-     * Instantiates a new Transaction.
-     *
-     * @param id       the id
-     * @param type     the type
-     * @param amount   the amount
-     * @param playerId the player id
-     */
-    public Transaction(Long id, TransactionType type, double amount, Long playerId) {
-        this.id = id;
+    public Transaction(Long id, Long playerId, TransactionType type, double amount) {
+        if (id != null) {
+            this.id = id;
+        }
         this.type = type;
         this.amount = amount;
         this.playerId = playerId;
@@ -66,6 +60,14 @@ public class Transaction {
         return type;
     }
 
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
+    public void setPlayerId(Long playerId) {
+        this.playerId = playerId;
+    }
+
     /**
      * Gets amount.
      *
@@ -82,6 +84,14 @@ public class Transaction {
      */
     public Long getPlayerId() {
         return playerId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

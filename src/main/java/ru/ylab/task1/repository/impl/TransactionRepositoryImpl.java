@@ -1,5 +1,6 @@
 package ru.ylab.task1.repository.impl;
 
+import ru.ylab.task1.dto.TransactionDto;
 import ru.ylab.task1.exception.DbException;
 import ru.ylab.task1.model.transaction.State;
 import ru.ylab.task1.model.transaction.Transaction;
@@ -25,17 +26,18 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         this.connection = connection;
     }
 
-    public Transaction createTransaction(TransactionType type, double amount, Long playerId) throws DbException {
+    public Transaction createTransaction(Transaction transaction) throws DbException {
         String sql = "INSERT INTO my_schema.transactions (type, amount, state, player_id) VALUES (?, ?, ?, ?) RETURNING id";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, type.name());
-            statement.setDouble(2, amount);
+            statement.setString(1, transaction.getType().name());
+            statement.setDouble(2, transaction.getAmount());
             statement.setString(3, State.SUCCESS.toString());
-            statement.setLong(4, playerId);
+            statement.setLong(4, transaction.getPlayerId());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 Long id = resultSet.getLong("id");
-                return new Transaction(id, type, amount, playerId);
+                transaction.setId(id);
+                return transaction;
             } else {
                 throw new DbException();
             }
@@ -55,7 +57,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 TransactionType type = TransactionType.valueOf(resultSet.getString("type"));
                 double amount = resultSet.getDouble("amount");
                 State state = State.valueOf(resultSet.getString("state"));
-                transactions.add(new Transaction(id, type, amount, playerId));
+                transactions.add(new Transaction(id, playerId, type, amount));
             }
         } catch (SQLException e) {
             e.printStackTrace();

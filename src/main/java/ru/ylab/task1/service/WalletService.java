@@ -1,7 +1,7 @@
 package ru.ylab.task1.service;
 
+import ru.ylab.task1.dto.TransactionDto;
 import ru.ylab.task1.exception.DbException;
-import ru.ylab.task1.model.transaction.TransactionType;
 
 import java.util.List;
 
@@ -11,15 +11,7 @@ import java.util.List;
  */
 public interface WalletService {
 
-    /**
-     * Activate transaction boolean.
-     *
-     * @param type     the type
-     * @param amount   the amount
-     * @param playerId the player id
-     * @return the boolean
-     */
-    boolean activateTransaction(TransactionType type, double amount, Long playerId) throws DbException;
+    boolean activateTransaction(TransactionDto transactionDto) throws DbException;
 
 
     /**
@@ -28,5 +20,5 @@ public interface WalletService {
      * @param playerId the player id
      * @return the list
      */
-    List<String> findTransactionHistory(Long playerId);
+    List<TransactionDto> findTransactionHistory(Long playerId);
 }

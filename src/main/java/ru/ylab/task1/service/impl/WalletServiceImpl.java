@@ -1,7 +1,10 @@
 package ru.ylab.task1.service.impl;
 
+import org.mapstruct.Mapper;
+import ru.ylab.task1.dto.TransactionDto;
 import ru.ylab.task1.exception.DbException;
 import ru.ylab.task1.exception.ImpossibleTransactionException;
+import ru.ylab.task1.mapper.TransactionMapper;
 import ru.ylab.task1.model.transaction.State;
 import ru.ylab.task1.model.transaction.Transaction;
 import ru.ylab.task1.model.transaction.TransactionType;
@@ -20,6 +23,8 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionRepository transactionRepository;
     private final PlayerRepository playerRepository;
 
+    private TransactionMapper mapper;
+
     /**
      * Instantiates a new Wallet service.
      *
@@ -29,15 +34,17 @@ public class WalletServiceImpl implements WalletService {
     public WalletServiceImpl(TransactionRepository transactionRepository, PlayerRepository playerRepository) {
         this.transactionRepository = transactionRepository;
         this.playerRepository = playerRepository;
+        mapper = TransactionMapper.INSTANCE;
     }
 
-    public boolean activateTransaction(TransactionType type, double amount, Long playerId) throws DbException {
-        Transaction transaction = transactionRepository.createTransaction(type, amount, playerId);
-        if (DEBIT.equals(type)) {
-            amount *= -1;
+    public boolean activateTransaction(TransactionDto transactionDto) throws DbException {
+        Transaction newTransaction = mapper.transactionDtoToTransaction(transactionDto);
+        Transaction transaction = transactionRepository.createTransaction(newTransaction);
+        if (DEBIT.equals(newTransaction.getType())) {
+            transaction.setAmount(transaction.getAmount() * -1);
         }
         try {
-            playerRepository.changePlayerBalanceById(playerId, amount);
+            playerRepository.changePlayerBalanceById(transaction.getPlayerId(), transaction.getAmount());
             transaction.setState(State.SUCCESS);
             return true;
         } catch (ImpossibleTransactionException e) {
@@ -46,7 +53,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
-    public List<String> findTransactionHistory(Long playerId) {
-        return transactionRepository.getAllPlayerTransaction(playerId).stream().map(Transaction::toString).toList();
+    public List<TransactionDto> findTransactionHistory(Long playerId) {
+        return transactionRepository.getAllPlayerTransaction(playerId).stream().map(x -> mapper.transactionToTransactionDto(x)).toList();
     }
 }

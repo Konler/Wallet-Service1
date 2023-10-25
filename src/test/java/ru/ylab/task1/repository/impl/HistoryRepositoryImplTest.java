@@ -8,6 +8,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.ylab.task1.DatabasePreparing;
+import ru.ylab.task1.exception.DbException;
 import ru.ylab.task1.model.HistoryItem;
 import ru.ylab.task1.repository.HistoryRepository;
 
@@ -39,7 +40,7 @@ public class HistoryRepositoryImplTest {
     }
 
     @Test
-    public void testGetPlayerHistoryWhenPlayerIdExistsThenReturnHistoryItems() {
+    public void testGetPlayerHistoryWhenPlayerIdExistsThenReturnHistoryItems() throws DbException {
         Long playerId = 1L;
         HistoryItem historyItem1 = new HistoryItem(1L, playerId, "action1", LocalDateTime.now());
         HistoryItem historyItem2 = new HistoryItem(2L, playerId, "action2", LocalDateTime.now());
@@ -50,7 +51,7 @@ public class HistoryRepositoryImplTest {
     }
 
     @Test
-    public void testAddHistoryItemWhenCalledThenAddToHistoryMap() {
+    public void testAddHistoryItemWhenCalledThenAddToHistoryMap() throws DbException {
         HistoryItem historyItem = new HistoryItem(1L, 1L, "action", LocalDateTime.now());
         historyRepository.addHistoryItem(historyItem);
     }

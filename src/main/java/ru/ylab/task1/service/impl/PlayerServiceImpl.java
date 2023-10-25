@@ -1,8 +1,10 @@
 package ru.ylab.task1.service.impl;
 
+import ru.ylab.task1.dto.HistoryItemDto;
 import ru.ylab.task1.exception.DbException;
 import ru.ylab.task1.exception.LoginExistsException;
 import ru.ylab.task1.exception.NotFoundException;
+import ru.ylab.task1.mapper.HistoryMapper;
 import ru.ylab.task1.model.HistoryItem;
 import ru.ylab.task1.model.Player;
 import ru.ylab.task1.repository.HistoryRepository;
@@ -24,6 +26,8 @@ public class PlayerServiceImpl implements PlayerService {
     private final HistoryRepository historyRepository;
     private final Random random;
 
+    private HistoryMapper historyMapper;
+
     /**
      * Instantiates a new Player service.
      *
@@ -34,6 +38,7 @@ public class PlayerServiceImpl implements PlayerService {
         this.playerRepository = playerRepository;
         this.historyRepository = historyRepository;
         random = new Random();
+        historyMapper = HistoryMapper.INSTANCE;
     }
 
     public Long registerPlayer(String login, String password) throws LoginExistsException, DbException {
@@ -59,8 +64,8 @@ public class PlayerServiceImpl implements PlayerService {
      * @param playerId the player id
      * @return
      */
-    public List<String> getAllHistory(Long playerId) throws DbException {
-        return historyRepository.getPlayerHistory(playerId).stream().map(HistoryItem::toString).toList();
+    public List<HistoryItemDto> getAllHistory(Long playerId) throws DbException {
+        return historyRepository.getPlayerHistory(playerId).stream().map(x -> historyMapper.historyItemToDto(x)).toList();
     }
 
     /**
@@ -71,7 +76,9 @@ public class PlayerServiceImpl implements PlayerService {
      * @param action   the action
      */
     public void addActionToHistory(Long playerId, String action) throws DbException {
-        historyRepository.addHistoryItem(new HistoryItem(random.nextLong(), playerId, action, LocalDateTime.now()));
+        if (playerId != null) {
+            historyRepository.addHistoryItem(new HistoryItem(random.nextLong(), playerId, action, LocalDateTime.now()));
+        }
     }
 
 

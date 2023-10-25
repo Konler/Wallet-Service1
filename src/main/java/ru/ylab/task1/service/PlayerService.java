@@ -1,5 +1,6 @@
 package ru.ylab.task1.service;
 
+import ru.ylab.task1.dto.HistoryItemDto;
 import ru.ylab.task1.exception.DbException;
 import ru.ylab.task1.exception.LoginExistsException;
 import ru.ylab.task1.exception.NotFoundException;
@@ -29,7 +30,7 @@ public interface PlayerService {
      * @param playerId the player id
      * @return the all history
      */
-    List<String> getAllHistory(Long playerId) throws DbException;
+    List<HistoryItemDto> getAllHistory(Long playerId) throws DbException;
 
     /**
      * Add action to history.
