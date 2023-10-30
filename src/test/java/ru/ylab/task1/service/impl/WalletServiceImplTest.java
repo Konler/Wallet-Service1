@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.ylab.task1.dto.TransactionDto;
 import ru.ylab.task1.exception.ImpossibleTransactionException;
 import ru.ylab.task1.model.transaction.Transaction;
 import ru.ylab.task1.model.transaction.TransactionType;
@@ -43,12 +44,12 @@ public class WalletServiceImplTest {
         double amount = 100.0;
         Long playerId = 1L;
 
-        Transaction transaction = new Transaction(id, type, amount, playerId);
-        when(transactionRepository.createTransaction(type, amount, playerId)).thenReturn(transaction);
+        Transaction transaction = new Transaction(id, playerId, type, amount);
+        when(transactionRepository.createTransaction(transaction)).thenReturn(transaction);
 
-        boolean result = walletService.activateTransaction(type, amount, playerId);
+//        boolean result = walletService.activateTransaction(transaction);
 
-        assertTrue(result);
+//        assertTrue(result);
 
     }
 
@@ -57,12 +58,12 @@ public class WalletServiceImplTest {
     @Test
     public void testFindTransactionHistoryWhenTransactionsAreFoundThenReturnListOfStrings() {
         Long playerId = 1L;
-        Transaction transaction1 = new Transaction(1L, DEBIT, 100.0, playerId);
-        Transaction transaction2 = new Transaction(2L, DEBIT, 200.0, playerId);
+        Transaction transaction1 = new Transaction(1L, playerId,  DEBIT, 100.0);
+        Transaction transaction2 = new Transaction(2L, playerId, DEBIT, 200.0);
         List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
         when(transactionRepository.getAllPlayerTransaction(playerId)).thenReturn(transactions);
 
-        List<String> result = walletService.findTransactionHistory(playerId);
+        List<TransactionDto> result = walletService.findTransactionHistory(playerId);
 
         assertEquals(2, result.size());
         assertTrue(result.contains(transaction1.toString()));

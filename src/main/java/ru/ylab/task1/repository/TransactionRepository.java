@@ -11,15 +11,8 @@ import java.util.List;
  */
 public interface TransactionRepository {
 
-    /**
-     * Create transaction transaction.
 
-     * @param type     the type
-     * @param amount   the amount
-     * @param playerId the player id
-     * @return the transaction
-     */
-    Transaction createTransaction(TransactionType type, double amount, Long playerId) throws DbException;
+    Transaction createTransaction(Transaction transaction) throws DbException;
 
     /**
      * Gets all player transaction.

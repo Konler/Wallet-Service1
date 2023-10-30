@@ -43,15 +43,18 @@ public class TransactionRepositoryImplTest {
         TransactionType type = TransactionType.CREDIT;
         double amount = 100.0;
         Long playerId = 1L;
-        Transaction transaction = transactionRepository.createTransaction(type, amount, playerId);
+        Transaction newTransaction1 = new Transaction(null, playerId, type, amount);
+        Transaction transaction = transactionRepository.createTransaction(newTransaction1);
         assertEquals(transaction.getAmount(), amount);
     }
 
     @Test
     public void testGetAllPlayerTransactionWhenTransactionsExistThenReturnCorrectTransactions() throws DbException {
         Long playerId = 2L;
-        Transaction transaction1 = transactionRepository.createTransaction(TransactionType.CREDIT, 100.0, playerId);
-        Transaction transaction2 = transactionRepository.createTransaction(TransactionType.DEBIT, 50.0, playerId);
+        Transaction newTransaction1 = new Transaction(null, playerId, TransactionType.CREDIT, 100.0);
+        Transaction newTransaction2 = new Transaction(null, playerId, TransactionType.DEBIT, 50.0);
+        Transaction transaction1 = transactionRepository.createTransaction(newTransaction1);
+        Transaction transaction2 = transactionRepository.createTransaction(newTransaction2);
         List<Transaction> transactions = transactionRepository.getAllPlayerTransaction(playerId);
         assertEquals(2, transactions.size());
         assertTrue(transactions.contains(transaction1));
